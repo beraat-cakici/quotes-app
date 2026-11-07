@@ -4,46 +4,14 @@ import { QuoteText } from "@/components/typography/QuoteText";
 import { AuthorText } from "@/components/typography/AuthorText";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
-import { quotes as intialQuotes } from "@/quotes";
-import { useState } from "react";
 
-const userId = "user-123";
+import { useQuotes } from "@/context/QuotesContext";
 
 export default function Home() {
-  const [quotes, setQuotes] = useState([...intialQuotes]);
-  const [index, setIndex] = useState(0);
+  const { quotes, likeQuote, userId, handlePrevious, handleNext, index } =
+    useQuotes();
+
   const isLiked = quotes[index].likedBy.includes(userId);
-
-  function handlePrevious() {
-    setIndex((currentIndex) =>
-      currentIndex === 0 ? quotes.length - 1 : currentIndex - 1,
-    );
-  }
-
-  function handleNext() {
-    setIndex((currentIndex) =>
-      currentIndex === quotes.length - 1 ? 0 : currentIndex + 1,
-    );
-  }
-
-  function handleLike() {
-    setQuotes((prevQuotes) => {
-      return prevQuotes.map((quote, quoteIndex) => {
-        if (quoteIndex === index) {
-          const alreadyLiked = quote.likedBy.includes(userId);
-
-          return {
-            ...quote,
-            likedBy: alreadyLiked
-              ? quote.likedBy.filter((id) => id !== userId)
-              : [...quote.likedBy, userId],
-          };
-        }
-
-        return quote;
-      });
-    });
-  }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-8">
@@ -51,7 +19,7 @@ export default function Home() {
         <div className="flex justify-end">
           <Button
             title={isLiked ? "\u2665" : "\u2661"}
-            handleClick={handleLike}
+            handleClick={() => likeQuote(index)}
             className={
               isLiked
                 ? "text-red-600 text-2xl"
