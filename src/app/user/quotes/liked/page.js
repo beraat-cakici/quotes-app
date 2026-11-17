@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { HeartCrack } from "lucide-react";
 
 import { useQuotes } from "@/context/QuotesContext";
-import { QuoteText } from "@/components/typography/QuoteText";
-import { AuthorText } from "@/components/typography/AuthorText";
-import { Button } from "@/components/Button";
-import { Card } from "@/components/Card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function LikedQuotes() {
   const { quotes, userId, likeQuote } = useQuotes();
@@ -27,36 +26,47 @@ export default function LikedQuotes() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 px-4 py-8">
-      <div className="mx-auto max-w-2xl">
-        <h1 className="mb-6 text-2xl font-bold text-gray-800">
+    <main className="flex-1 bg-background px-4 py-10">
+      <div className="mx-auto w-full max-w-2xl">
+        <h1 className="mb-8 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
           My Liked Quotes
         </h1>
 
         {likedQuotes.length === 0 ? (
-          <p className="text-gray-600">You haven't liked any quotes yet.</p>
+          <p className="rounded-lg bg-muted p-6 text-center text-muted-foreground">
+            You haven't liked any quotes yet.
+          </p>
         ) : (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-5">
             {likedQuotes.map(({ quote, index }) => {
               const isPending = pendingIndex === index;
 
               return (
-                <Card key={index}>
-                  <div className="flex justify-end">
+                <Card key={index} className="shadow-sm">
+                  <div className="flex justify-end px-4 pt-4">
                     <Button
-                      title={isPending ? "💔" : "♥"}
-                      hoverTitle="💔"
-                      handleClick={() => handleUnlike(index)}
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleUnlike(index)}
                       disabled={isPending}
-                      className="text-2xl text-red-600"
-                    />
+                      aria-label={`Unlike quote by ${quote.author}`}
+                      className="text-red-500 hover:text-red-600"
+                    >
+                      <HeartCrack
+                        className={`size-5 ${isPending ? "animate-pulse" : ""}`}
+                      />
+                    </Button>
                   </div>
 
-                  <QuoteText>{quote.quote}</QuoteText>
+                  <CardContent className="flex flex-col gap-5">
+                    <blockquote className="text-lg leading-relaxed text-foreground sm:text-xl">
+                      "{quote.quote}"
+                    </blockquote>
 
-                  <div className="mt-4">
-                    <AuthorText>{quote.author}</AuthorText>
-                  </div>
+                    <p className="text-right text-sm font-semibold text-muted-foreground">
+                      — {quote.author}
+                    </p>
+                  </CardContent>
                 </Card>
               );
             })}
